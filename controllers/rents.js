@@ -8,6 +8,7 @@ const {
   customer,
   payment,
 } = require("../models");
+const moment = require('moment-timezone')
 const { Op } = require("sequelize");
 
 const getAllRents = async (req, res, next) => {
@@ -237,6 +238,39 @@ const updateRent = async (req, res, next) => {
   }
 };
 
+const endOutdatedRents = async (req, res, next) => {
+  try {
+    let currentRents = await rent.findAll({
+      where: {
+        status: 'Rentado'
+      },
+    });
+
+    if(Array.isArray(currentRents) && currentRents.length > 0) {
+      
+      currentRents = currentRents.map(currentRent => {
+        currentRent = currentRent.toJSON();
+        const event_date = moment(currentRent.event_date);
+        const currentDate = moment();
+
+        if(currentDate.isAfter(event_date, 'day')) {
+          rent.update({
+            status: 'Finalizado'
+          },{
+            where: {
+              rent_id: currentRent.rent_id
+            }
+          })          
+        }
+      })
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteRent = async (req, res, next) => {
   try {
     const { rent_id } = req.params;
@@ -256,5 +290,6 @@ module.exports = {
   getSingleRent,
   createRent,
   updateRent,
+  endOutdatedRents,
   deleteRent,
 };
