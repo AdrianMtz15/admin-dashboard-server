@@ -36,9 +36,7 @@ const getSingleProduct = async (req, res, next) => {
 const getProductAvailability = async (req, res, next) => {
   try {
     const { product_id } = req.params;
-    let { start_date, end_date, event_date, current_rent_id } = req.query;
-
-    console.log(event_date);
+    let { event_date, current_rent_id } = req.query;
 
     let currentProduct = await product.findOne({
       where: {
