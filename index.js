@@ -47,14 +47,6 @@ app.use(express.static(path.join(__dirname, 'images')));
   
   await setupSentry(app);
 
-  if (process.env.NODE_ENV === "production") {
-    app.use(express.static(`${__dirname}/build`));
-  
-    app.get("/*", (req, res) => {
-      res.sendFile(`${__dirname}/build/index.html`);
-    });
-  }
-  
   http.listen(port, () => {
     console.log(`CCT Server running on port ${port}`);
   });
