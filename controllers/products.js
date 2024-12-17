@@ -14,6 +14,8 @@ const moment = require("moment-timezone");
 
 const getProducts = async (req, res, next) => {
   try {
+    const { event_date } = req.query;
+
     const products = await product.findAll({
       include: [file],
     });
